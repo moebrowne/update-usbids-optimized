@@ -2,6 +2,18 @@
 
 # Update USB IDs optmisied v0.2
 
+# Param Defaults
+QUIET=false
+
+# Get any params defined
+for i in "$@"
+do
+case $i in
+        -q)	QUIET=true ;;
+        -*)	echo "UNKNOWN PARAMETER ${i#*=}"; exit ;;
+esac
+done
+
 # The URL to download
 USBIDS_URL="http://www.linux-usb.org/usb.ids.gz"
 
@@ -15,7 +27,7 @@ regexSize="Content-Length: ([0-9]+)"
 regexLastMod="Last-Modified: ([a-zA-Z0-9\/ :,-]+)"
 regexHTTPCode="HTTP/[0-9].[0-9] ([0-9]+) ([a-zA-Z0-9\. -]+)"
 
-echo "Updating USB IDs..."
+if [ $QUIET = false ]; then echo "Updating USB IDs..."; fi
 
 #Get the HTTP headers for the IDs
 USBIDS_HEADERS=`curl -sI "$USBIDS_URL"`
@@ -26,7 +38,7 @@ USBIDS_RESPONSE_CODE="${BASH_REMATCH[1]}"
 USBIDS_RESPONSE_MSG="${BASH_REMATCH[2]}"
 
 if [ "$USBIDS_RESPONSE_CODE" != 200 ]; then
-	echo "Download Error [HTTP $USBIDS_RESPONSE_CODE $USBIDS_RESPONSE_MSG]"
+	if [ $QUIET = false ]; then echo "Download Error [HTTP $USBIDS_RESPONSE_CODE $USBIDS_RESPONSE_MSG]"; fi
 	exit
 fi
 
@@ -50,7 +62,7 @@ fi
 
 # Check if the version we requested is different from the current one
 if [ "$USBIDS_VERSION" = "$USBIDS_ETAG" ]; then
-	echo "List is already up to date"
+	if [ $QUIET = false ]; then echo "List is already up to date"; fi
 	exit
 fi
 
@@ -61,6 +73,6 @@ cp -a "$USBIDS_PATH_LIST" "$USBIDS_PATH_LIST"~
 curl -sL "$USBIDS_URL" | pv -s "$USBIDS_SIZE" -cN "Download" | zcat | pv -cN "Extract" > "$USBIDS_PATH_LIST"
 
 # Write the new version to the version file
-echo "$USBIDS_ETAG" > "$USBIDS_PATH_REVISION"
+if [ $QUIET = false ]; then echo "$USBIDS_ETAG" > "$USBIDS_PATH_REVISION"; fi
 
-echo "List updated!"
+if [ $QUIET = false ]; then echo "List updated!"; fi
