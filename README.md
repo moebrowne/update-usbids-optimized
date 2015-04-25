@@ -1,7 +1,7 @@
 # Update USB IDs
 
 This tool is a more intelligent version of the default `update-usbids` command.
-It uses the ETag header sent by the USB ID list server [http://www.linux-usb.org] to check if we already have the most up to date list.
+It uses the ETag header sent by the USB ID list server http://www.linux-usb.org to check if we already have the most up to date list.
 
 ## Usage
 
