@@ -5,6 +5,10 @@
 # The URL to download
 USBIDS_URL="http://www.linux-usb.org/usb.ids.gz"
 
+# Where to store the ID list
+USBIDS_PATH_LIST="/var/lib/usbutils/usb.ids"
+USBIDS_PATH_REVISION="/var/lib/usbutils/usb.ids.version"
+
 # Regex
 regexETag="ETag: \"([a-z0-9\-]+)\""
 regexSize="Content-Length: ([0-9]+)"
