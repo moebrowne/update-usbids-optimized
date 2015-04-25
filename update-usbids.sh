@@ -41,3 +41,22 @@ USBIDS_SIZE="${BASH_REMATCH[1]}"
 [[ $USBIDS_HEADERS =~ $regexETag ]]
 USBIDS_ETAG="${BASH_REMATCH[1]}"
 
+#Get the current revision if there is one
+if [ -f "$USBIDS_PATH_REVISION" ]; then
+	USBIDS_VERSION=`cat "$USBIDS_PATH_REVISION"`
+fi
+
+# Check if the version we requested is different from the current one
+if [ "$USBIDS_VERSION" = "$USBIDS_ETAG" ]; then
+	echo "We already have the latest version"
+	exit
+fi
+
+# Backup the list
+cp -a "$USBIDS_PATH_LIST" "$USBIDS_PATH_LIST"~
+
+# Download the new list
+curl -sL "$USBIDS_URL" | pv -s "$USBIDS_SIZE" -cN "Download" | zcat | pv -cN "Extract" > "$USBIDS_PATH_LIST"
+
+# Write the new version to the version file
+echo "$USBIDS_ETAG" > "$USBIDS_PATH_REVISION"
