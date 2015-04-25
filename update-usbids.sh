@@ -15,6 +15,8 @@ regexSize="Content-Length: ([0-9]+)"
 regexLastMod="Last-Modified: ([a-zA-Z0-9\/ :,-]+)"
 regexHTTPCode="HTTP/[0-9].[0-9] ([0-9]+) ([a-zA-Z0-9\. -]+)"
 
+echo "Updating USB IDs..."
+
 #Get the HTTP headers for the IDs
 USBIDS_HEADERS=`curl -sI "$USBIDS_URL"`
 
@@ -48,7 +50,7 @@ fi
 
 # Check if the version we requested is different from the current one
 if [ "$USBIDS_VERSION" = "$USBIDS_ETAG" ]; then
-	echo "We already have the latest version"
+	echo "List is already up to date"
 	exit
 fi
 
@@ -60,3 +62,5 @@ curl -sL "$USBIDS_URL" | pv -s "$USBIDS_SIZE" -cN "Download" | zcat | pv -cN "Ex
 
 # Write the new version to the version file
 echo "$USBIDS_ETAG" > "$USBIDS_PATH_REVISION"
+
+echo "List updated!"
