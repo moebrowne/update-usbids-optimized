@@ -1,15 +1,17 @@
 #!/bin/bash
 
-# Update USB IDs optmisied v0.2
+# Update USB IDs optmisied v0.3
 
 # Param Defaults
 QUIET=false
+FORCE=false
 
 # Get any params defined
 for i in "$@"
 do
 case $i in
         -q)	QUIET=true ;;
+        -f)	FORCE=true ;;
         -*)	echo "UNKNOWN PARAMETER ${i#*=}"; exit ;;
 esac
 done
@@ -66,7 +68,7 @@ if [ -f "$USBIDS_PATH_REVISION" ]; then
 fi
 
 # Check if the version we requested is different from the current one
-if [ "$USBIDS_VERSION" = "$USBIDS_ETAG" ]; then
+if [ "$USBIDS_VERSION" = "$USBIDS_ETAG" ] && [ $FORCE = false ]; then
 	if [ $QUIET = false ]; then echo "List is already up to date"; fi
 	exit
 fi
@@ -75,7 +77,11 @@ fi
 cp -a "$USBIDS_PATH_LIST" "$USBIDS_PATH_LIST"~
 
 # Download the new list
-curl -sL "$USBIDS_URL" | pv -s "$USBIDS_SIZE" -cN "Download" | zcat | pv -cN "Extract" > "$USBIDS_PATH_LIST"
+if [ $QUIET = false ]; then
+	curl -sL "$USBIDS_URL" | pv -s "$USBIDS_SIZE" -cN "Download" | zcat | pv -cN "Extract" > "$USBIDS_PATH_LIST"
+else
+	curl -sL "$USBIDS_URL" | zcat > "$USBIDS_PATH_LIST"
+fi
 
 # Write the new version to the version file
 if [ $QUIET = false ]; then echo "$USBIDS_ETAG" > "$USBIDS_PATH_REVISION"; fi
