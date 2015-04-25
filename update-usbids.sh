@@ -21,6 +21,11 @@ USBIDS_URL="http://www.linux-usb.org/usb.ids.gz"
 USBIDS_PATH_LIST="/var/lib/usbutils/usb.ids"
 USBIDS_PATH_REVISION="/var/lib/usbutils/usb.ids.version"
 
+if [ ! -w "$USBIDS_PATH_LIST" ]; then
+	if [ $QUIET = false ]; then echo "No write permission for $USBIDS_PATH_LIST"; fi
+	exit
+fi
+
 # Regex
 regexETag="ETag: \"([a-z0-9\-]+)\""
 regexSize="Content-Length: ([0-9]+)"
