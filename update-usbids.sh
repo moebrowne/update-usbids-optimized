@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Update USB IDs optmisied v0.1
+# Update USB IDs optmisied v0.2
 
 # The URL to download
 USBIDS_URL="http://www.linux-usb.org/usb.ids.gz"
